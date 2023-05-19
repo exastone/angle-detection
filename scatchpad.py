@@ -1,28 +1,20 @@
 # scatchpad.py
-from filecmp import cmp
 from fileinput import filename
 
 import cv2 as cv
 import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib.image as mpimg
-import json
-import corners as corners
+import corner_detect as corner_detect
 
 
-def dumptotxt(x):
-    with open("txtdump.txt", "a") as file:
-        file.write("\n ---------------------- \n")
-        file.write(str(x))
-
-
-origfile = "randomItems2.png"
+src_img = "images/Items2.png"
 # img_org = cv.imread(origfile, cv.IMREAD_COLOR)
-img = mpimg.imread(origfile)
+img = mpimg.imread(src_img)
 # imgplot = plt.imshow(img)
 
 
-filename = "randomItems3r.png"
+filename = "images/Items3r.png"
 img_color = cv.imread(filename, cv.IMREAD_COLOR)
 
 
@@ -36,9 +28,7 @@ plt.imshow(img_gray, cmap="gray")
 
 
 # [!] Smoothing
-# plt.figure("blur image")
 img_gray = cv.medianBlur(img_gray, 5)
-# plt.imshow(img_blur, cmap="gray")
 
 # [!] Closing -> Dilation followed by Erosion
 plt.figure("Morph")
@@ -70,7 +60,7 @@ plt.imshow(img_copy)
 # perimeter = cv.arcLength(cnt, True)
 # print(f"cx: {cx} \t cy: {cy}")
 
-shape = corners.ShapeDetector()
+shape = corner_detect.ShapeDetector()
 
 for idx, contour in enumerate(contours):
     M = cv.moments(contour)

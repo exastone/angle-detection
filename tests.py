@@ -1,45 +1,41 @@
 # tests.py
-import sys
-from typing import Generic
 import cv2 as cv
 from matplotlib import pyplot as plt
 import numpy as numpy
-from PIL import Image
-from corners import detectCorners
 
-
-""" Test for determine optimal input parameters of cornerHarris Edge detection.
-@test_cornerHarris(srcImg, grayImg, paramOption, outputType)
-srcImg - RGB color image
-grayImg - grayscale image
-paramOption - which parameter to vary during test: "blocksize" || "ksize" || "k"
-outputType - returned figure; src image with markings or detector output:  "source" || "detector"
+"""
+Test for determining the optimal input parameters of cornerHarris edge detection.
+    
+Args:
+    srcImg: RGB color image.
+    grayImg: Grayscale image.
+    paramOption: Parameter to vary during the test: "blocksize" || "ksize" || "k".
+    outputType: Returned figure; source image with markings or detector output: "source" || 
+"detector".
+    
+Returns:
+    Resulting figure.
 """
 
 
 def cornerHarris_test(srcImg, grayImg, paramOption, outputType):
-    blocksizeList = [2, 3, 4, 5, 6, 7, 8]
-    ksizeList = [3, 5, 7, 9]
-    kList = [0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08]
+    list_blocksize = [2, 3, 4, 5, 6, 7, 8]
+    list_ksize = [3, 5, 7, 9]
+    list_kvalue = [0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08]
 
     if paramOption == "blocksize":
         resultFigure = plt.figure("testing blocksize parameter", tight_layout=True)
 
-        for i in range(len(blocksizeList)):
+        for i in range(len(list_blocksize)):
             # plt.subplot(int(ceil(len(blocksizeList) / 2)), 2, (i + 1))
             plt.subplot(2, 4, (i + 1))
 
             """
-            detectorResponse (often ref. as dst) is a copy of the input (gray) image that reinterprets
-            grayscale intensities [0, 255], as float32s, assigning 0.0 to "background" pixels and
-            assigning very large values to pixels that corrispond e.g. 4.6e+08.
-            This results in a image that rather useless by itself so comparitive thresholding is
-            done to the origional image. Since the detectorResponse image is an exact size copy, of the
-            source image, the detectorResponse img iterated through, if a pixel is above some threshold
-            the corrisponding pixel on the source image is set to red i.e. [255, 0 , 0]
+            The `detectorResponse` (often referred to as `dst`) is a floating-point copy of the input grayscale image. It assigns a value of 0.0 to the "background" pixels and very large values to pixels that correspond to certain features. This results in an image that is not very informative by itself. To extract meaningful information, comparative thresholding is performed on the original image. Since the `detectorResponse` image has the same size as the source image, it is iterated through, and if a pixel exceeds a certain threshold, the corresponding pixel in the source image is set to the color red, represented as [255, 0, 0].
             """
+
             detectorResponse = cv.cornerHarris(
-                grayImg, blocksizeList[i], ksizeList[0], kList[0]
+                grayImg, list_blocksize[i], list_ksize[0], list_kvalue[0]
             )
 
             # dilate just enhances the markers
@@ -53,16 +49,16 @@ def cornerHarris_test(srcImg, grayImg, paramOption, outputType):
             elif outputType == "detector":
                 plt.imshow(detectorResponse, cmap="gray")
 
-            plt.title("blocksize = " + str(blocksizeList[i]))
+            plt.title("blocksize = " + str(list_blocksize[i]))
 
     elif paramOption == "ksize":
         resultFigure = plt.figure("testing ksize parameter", tight_layout=True)
 
-        for i in range(len(ksizeList)):
+        for i in range(len(list_ksize)):
             plt.subplot(1, 4, (i + 1))
 
             detectorResponse = cv.cornerHarris(
-                grayImg, blocksizeList[0], ksizeList[i], kList[0]
+                grayImg, list_blocksize[0], list_ksize[i], list_kvalue[0]
             )
 
             # dilate just enhances the markers
@@ -77,16 +73,16 @@ def cornerHarris_test(srcImg, grayImg, paramOption, outputType):
             elif outputType == "detector":
                 plt.imshow(detectorResponse, cmap="gray")
 
-            plt.title("ksize = " + str(ksizeList[i]))
+            plt.title("ksize = " + str(list_ksize[i]))
 
     elif paramOption == "k":
         resultFigure = plt.figure("testing k parameter", tight_layout=True)
 
-        for i in range(len(kList)):
+        for i in range(len(list_kvalue)):
             plt.subplot(2, 4, (i + 1))
 
             detectorResponse = cv.cornerHarris(
-                grayImg, blocksizeList[0], ksizeList[0], kList[i]
+                grayImg, list_blocksize[0], list_ksize[0], list_kvalue[i]
             )
 
             # dilate just enhances the markers
@@ -101,7 +97,7 @@ def cornerHarris_test(srcImg, grayImg, paramOption, outputType):
             elif outputType == "detector":
                 plt.imshow(detectorResponse, cmap="gray")
 
-            plt.title("k = " + str(kList[i]))
+            plt.title("k = " + str(list_kvalue[i]))
     else:
         raise NameError("invalid input for Corner Harris Test")
 
@@ -110,8 +106,6 @@ def cornerHarris_test(srcImg, grayImg, paramOption, outputType):
 
 """
 Example usage:
-
-...
 
 srcImg = cv.imread("shapeshollow.png", cv.IMREAD_UNCHANGED)
 
